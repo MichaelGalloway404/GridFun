@@ -1,7 +1,8 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
 let LEFT, RIGHT, UP, DOWN;
-// 	handle key strokes 
+
+// Handle key strokes 
 canvas.addEventListener('keydown', function(e) {
 	if (e.keyCode === 37) LEFT = true;
 	if (e.keyCode === 38) UP = true;
@@ -19,23 +20,33 @@ function randInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// --- ADDED FOR TIMING CONTROL ---
+let lastTime = 0;
+const fps = 5; // Change this number to adjust speed (frames per second)
+const interval = 1000 / fps; // Milliseconds between frames
+
 function runAnimation(timestamp) {
-	ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-	for (let i = 0; i < 12*5; i++) {
-		for (let j = 0; j < 12*5; j++) {
-			ctx.beginPath(); //needed for fill
-			// ctx.moveTo(0, 0);
-			// ctx.lineTo(canvas.clientWidth, canvas.clientHeight);
-			// ctx.lineWidth = 4;
-			// ctx.strokeRect(10,10,50,50); // only for skeleton
-			ctx.rect(i * 10, j * 10, 50, 50);
-			ctx.strokeStyle = "black";
-			// ctx.strokeStyle = "rgb(0, 255, 0)"; // Green
-			ctx.fillStyle = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; // Red
-			ctx.fill();
-			ctx.stroke(); //needed for fill
+	requestAnimationFrame(runAnimation);
+
+	// Calculate how much time passed since the last render
+	const deltaTime = timestamp - lastTime;
+
+	// Only draw if enough time has passed
+	if (deltaTime >= interval) {
+		// Adjust lastTime, accounting for any leftover milliseconds
+		lastTime = timestamp - (deltaTime % interval);
+
+		ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+		for (let i = 0; i < 12*5; i++) {
+			for (let j = 0; j < 12*5; j++) {
+				ctx.beginPath(); 
+				ctx.rect(i * 10, j * 10, 50, 50);
+				ctx.strokeStyle = "black";
+				ctx.fillStyle = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; 
+				ctx.fill();
+				ctx.stroke(); 
+			}
 		}
 	}
-	requestAnimationFrame(runAnimation);
 }
 requestAnimationFrame(runAnimation);
