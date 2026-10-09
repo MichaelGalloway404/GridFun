@@ -49,9 +49,9 @@ function runAnimation(timestamp) {
 				ctx.fillStyle = `rgb(${randInt(0,1)}, ${randInt(0,1)}, ${inc}})`; 
 				ctx.fill();
 				ctx.stroke(); 
-				if (inc >= 255){inc = 0;}
+				
 			}
-		}
+		}if (inc >= 255){inc = 0;}
 	}
 }
 requestAnimationFrame(runAnimation);
