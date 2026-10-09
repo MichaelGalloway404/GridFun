@@ -25,12 +25,13 @@ let lastTime = 0;
 const fps = 60; // Change this number to adjust speed (frames per second)
 const interval = 1000 / fps; // Milliseconds between frames
 let inc = 0;
+
 function runAnimation(timestamp) {
 	requestAnimationFrame(runAnimation);
 
 	// Calculate how much time passed since the last render
 	const deltaTime = timestamp - lastTime;
-
+	
 	// Only draw if enough time has passed
 	if (deltaTime >= interval) {
 		// Adjust lastTime, accounting for any leftover milliseconds
@@ -40,7 +41,7 @@ function runAnimation(timestamp) {
 		for (let i = 0; i < 12*5; i++) {
 			for (let j = 0; j < 12*5; j++) {
 				inc++;
-				if (inc >= 255){inc = 0;}
+				
 				ctx.beginPath(); 
 				ctx.rect(i * 10, j * 10, 50, 50);
 				ctx.strokeStyle = "black";
@@ -48,6 +49,7 @@ function runAnimation(timestamp) {
 				ctx.fillStyle = `rgb(${randInt(0,1)}, ${randInt(0,1)}, ${inc}})`; 
 				ctx.fill();
 				ctx.stroke(); 
+				if (inc >= 255){inc = 0;}
 			}
 		}
 	}
