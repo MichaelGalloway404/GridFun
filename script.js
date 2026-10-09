@@ -24,7 +24,7 @@ function randInt(min, max) {
 let lastTime = 0;
 const fps = 5; // Change this number to adjust speed (frames per second)
 const interval = 1000 / fps; // Milliseconds between frames
-
+let inc = 0;
 function runAnimation(timestamp) {
 	requestAnimationFrame(runAnimation);
 
@@ -39,11 +39,13 @@ function runAnimation(timestamp) {
 		ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 		for (let i = 0; i < 12*5; i++) {
 			for (let j = 0; j < 12*5; j++) {
+				inc++;
+				if (inc == 255){inc = 0;}
 				ctx.beginPath(); 
 				ctx.rect(i * 10, j * 10, 50, 50);
 				ctx.strokeStyle = "black";
 				//ctx.fillStyle = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; 
-				ctx.fillStyle = `rgb(${randInt(0,1)}, ${randInt(0,1)}, ${randInt(0,255)})`; 
+				ctx.fillStyle = `rgb(${randInt(0,1)}, ${randInt(0,1)}, inc})`; 
 				ctx.fill();
 				ctx.stroke(); 
 			}
