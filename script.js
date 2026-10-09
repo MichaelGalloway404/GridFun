@@ -40,7 +40,7 @@ function runAnimation(timestamp) {
 		for (let i = 0; i < 12*5; i++) {
 			for (let j = 0; j < 12*5; j++) {
 				inc++;
-				if (inc == 255){inc = 0;}
+				if (inc >= 255){inc = 0;}
 				ctx.beginPath(); 
 				ctx.rect(i * 10, j * 10, 50, 50);
 				ctx.strokeStyle = "black";
