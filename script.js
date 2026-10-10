@@ -40,7 +40,7 @@ function runAnimation(timestamp) {
   inc++;
 		ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 		for (let i = 0; i < 12*5; i++) {
-			let ran = randImt(0,254);
+			let ran = randImnt(0,254);
 			for (let j = 0; j < 12*5; j++) {
 				
 				
