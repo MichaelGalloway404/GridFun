@@ -48,6 +48,7 @@ function runAnimation(timestamp) {
 		lastTime = timestamp - (deltaTime % interval);
   //inc++;
 		ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+		inc = randInt(0,2);
 		/*for (let i = 0; i < 12*5; i++) {
 			let ran = randInt(0,254);
 			for (let j = 0; j < 12*5; j++) {
@@ -73,6 +74,8 @@ ctx.fillStyle = `rgb(${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))}, $
 				ctx.fill();
 				ctx.stroke(); 
 				if(boxes[0].y <= 200) boxes[0].y += 5;
+				if(inc == 0) boxes[0].x -= 5;
+				if(inc == 1) boxes[0].x += 5;
 	}
 }
 requestAnimationFrame(runAnimation);
