@@ -76,7 +76,7 @@ for(let i = 0;i<boxes.length;i++){
 				ctx.fillStyle = 'black';
 				ctx.fill();
 				ctx.stroke(); 
-				if(boxes[i].y < canvas.clientHeight - 10) boxes[i].y += 5;
+				if(boxes[i].y < canvas.clientHeight - 10) boxes[i].y += randInt(1,10);
 				if(inc == 0) boxes[i].x -= 5;
 				if(inc == 1) boxes[i].x += 5;
 				}
