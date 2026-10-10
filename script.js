@@ -5,8 +5,8 @@ let LEFT, RIGHT, UP, DOWN;
 let box ={
 	x:0,
 	y:0,
-	w:50,
-	h:50
+	w:5,
+	h:5
 };
 let boxes= [];
 boxes.push(box); 
@@ -72,7 +72,7 @@ ctx.fillStyle = `rgb(${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))}, $
 				ctx.fillStyle = 'black';
 				ctx.fill();
 				ctx.stroke(); 
-				if(boxes[0].y <= 200) boxes[0].y += 1;
+				if(boxes[0].y <= 200) boxes[0].y += 5;
 	}
 }
 requestAnimationFrame(runAnimation);
