@@ -73,7 +73,7 @@ ctx.fillStyle = `rgb(${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))}, $
 				ctx.fillStyle = 'black';
 				ctx.fill();
 				ctx.stroke(); 
-				if(boxes[0].y <= 400) boxes[0].y += 5;
+				if(boxes[0].y < canvas.clientHeight - 10) boxes[0].y += 5;
 				if(inc == 0) boxes[0].x -= 5;
 				if(inc == 1) boxes[0].x += 5;
 	}
