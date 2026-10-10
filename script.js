@@ -48,7 +48,7 @@ function runAnimation(timestamp) {
 				ctx.rect(i * 10, j * 10, 50, 50);
 				ctx.strokeStyle = "black";
 				//ctx.fillStyle = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; 
-				ctx.fillStyle = `rgb(${randInt(0,1)}, ${randInt(0,1)}, ${(inc*ran%255)})`; 
+				ctx.fillStyle = `rgb(${(inc*ran%255)}, ${(inc*ran%255)},${(inc*ran%255)})`; 
 				ctx.fill();
 				ctx.stroke(); 
 				if (inc >= 255){inc = 0;}
