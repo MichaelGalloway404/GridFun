@@ -37,11 +37,11 @@ function runAnimation(timestamp) {
 	if (deltaTime >= interval) {
 		// Adjust lastTime, accounting for any leftover milliseconds
 		lastTime = timestamp - (deltaTime % interval);
-
+  inc++;
 		ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 		for (let i = 0; i < 12*5; i++) {
 			for (let j = 0; j < 12*5; j++) {
-				inc++;
+				
 				
 				ctx.beginPath(); 
 				ctx.rect(i * 10, j * 10, 50, 50);
@@ -50,9 +50,9 @@ function runAnimation(timestamp) {
 				ctx.fillStyle = `rgb(${randInt(0,1)}, ${randInt(0,1)}, ${inc})`; 
 				ctx.fill();
 				ctx.stroke(); 
-				
+				if (inc >= 255){inc = 0;}
 			}
-		}if (inc >= 255){inc = 0;}
+		}
 	}
 }
 requestAnimationFrame(runAnimation);
