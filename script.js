@@ -2,12 +2,13 @@
 const ctx = canvas.getContext('2d');
 let LEFT, RIGHT, UP, DOWN;
 let boxes= [];
-for(let i = 0;i<100;i++){
+for(let i = 0;i<200;i++){
 	let box ={
 	x:randInt(0,canvas.clientWidth-10),
 	y:0,
 	w:5,
-	h:5
+	h:5,
+	color:`rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`
 };
 
 boxes.push(box); 
@@ -73,7 +74,7 @@ for(let i = 0;i<boxes.length;i++){
 				ctx.strokeStyle = "black";
 				//ctx.fillStyle = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; 
 				//ctx.fillStyle = `rgb(${(inc*ran%255)}, ${(inc*ran%255)},${(inc*ran%255)})`; 
-				ctx.fillStyle = 'black';
+				ctx.fillStyle = boxes[i].color;
 				ctx.fill();
 				ctx.stroke(); 
 				if(boxes[i].y < canvas.clientHeight - 10) boxes[i].y += randInt(1,10);
