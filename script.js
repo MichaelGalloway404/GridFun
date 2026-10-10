@@ -78,6 +78,7 @@ for(let i = 0;i<boxes.length;i++){
 				ctx.fill();
 				ctx.stroke(); 
 				if(boxes[i].y < canvas.clientHeight - 10) boxes[i].y += randInt(1,10);
+				if(boxes[i].y >= canvas.clientHeight){boxes[i].y=0;}
 				if(inc == 0 && boxes[i].x > 0 && boxes[i].x < canvas.clientWidth -10 ) boxes[i].x -= randInt(1,10);
 				if(inc == 1 && boxes[i].x > 0 && boxes[i].x < canvas.clientWidth -10 ) boxes[i].x += randInt(1,10);
 				}
