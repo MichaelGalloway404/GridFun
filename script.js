@@ -31,7 +31,7 @@ function runAnimation(timestamp) {
 
 	// Calculate how much time passed since the last render
 	const deltaTime = timestamp - lastTime;
-	if (inc >= 255){inc = 0;}
+	
 	
 	// Only draw if enough time has passed
 	if (deltaTime >= interval) {
@@ -51,7 +51,7 @@ function runAnimation(timestamp) {
 				ctx.fill();
 				ctx.stroke(); 
 				
-			}
+			}if (inc >= 255){inc = 0;}
 		}
 	}
 }
