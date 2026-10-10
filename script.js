@@ -1,15 +1,17 @@
  const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
 let LEFT, RIGHT, UP, DOWN;
-
-let box ={
-	x:0,
+let boxes= [];
+for(let i = 0;i<100;i++){
+	let box ={
+	x:randInt(0,canvas.clientWidth-10),
 	y:0,
 	w:5,
 	h:5
 };
-let boxes= [];
+
 boxes.push(box); 
+	}
 
 // Handle key strokes 
 canvas.addEventListener('keydown', function(e) {
@@ -65,17 +67,19 @@ ctx.fillStyle = `rgb(${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))}, $
 				if (inc >= 255){inc = 0;}
 			}
 		}*/
+for(let i = 0;i<boxes.length;i++){
     ctx.beginPath(); 
-				ctx.rect(boxes[0].x+100,boxes[0].y,boxes[0].w,boxes[0].h);
+				ctx.rect(boxes[i].x,boxes[i].y,boxes[i].w,boxes[i].h);
 				ctx.strokeStyle = "black";
 				//ctx.fillStyle = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; 
 				//ctx.fillStyle = `rgb(${(inc*ran%255)}, ${(inc*ran%255)},${(inc*ran%255)})`; 
 				ctx.fillStyle = 'black';
 				ctx.fill();
 				ctx.stroke(); 
-				if(boxes[0].y < canvas.clientHeight - 10) boxes[0].y += 5;
-				if(inc == 0) boxes[0].x -= 5;
-				if(inc == 1) boxes[0].x += 5;
+				if(boxes[i].y < canvas.clientHeight - 10) boxes[i].y += 5;
+				if(inc == 0) boxes[i].x -= 5;
+				if(inc == 1) boxes[i].x += 5;
+				}
 	}
 }
 requestAnimationFrame(runAnimation);
