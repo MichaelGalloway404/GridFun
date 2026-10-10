@@ -81,8 +81,8 @@ for(let i = 0;i<boxes.length;i++){
 				if(boxes[i].y >= canvas.clientHeight - 15){boxes[i].y=0;}
 				if(inc == 0 ) boxes[i].x -= randInt(1,10);
 				if(inc == 1 ) boxes[i].x += randInt(1,10);
-				if(boxes[i].x > 0 ){boxes[i].x=5;}
-				if(boxes[i].x < canvas.clientWidth -10 ){boxes[i].x = canvas.clientWidth -15;}
+				if(boxes[i].x < 0 ){boxes[i].x=5;}
+				if(boxes[i].x > canvas.clientWidth -10 ){boxes[i].x = canvas.clientWidth -15;}
 				}
 	}
 }
