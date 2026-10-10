@@ -9,7 +9,7 @@ let box ={
 	h:50
 };
 let boxes= [];
-boxes.push[box];
+boxes.push(box); 
 
 // Handle key strokes 
 canvas.addEventListener('keydown', function(e) {
@@ -48,7 +48,7 @@ function runAnimation(timestamp) {
 		lastTime = timestamp - (deltaTime % interval);
   inc++;
 		ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-		for (let i = 0; i < 12*5; i++) {
+		/*for (let i = 0; i < 12*5; i++) {
 			let ran = randInt(0,254);
 			for (let j = 0; j < 12*5; j++) {
 				
@@ -63,7 +63,15 @@ ctx.fillStyle = `rgb(${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))}, $
 				ctx.stroke(); 
 				if (inc >= 255){inc = 0;}
 			}
-		}
+		}*/
+ctx.beginPath(); 
+				ctx.rect(boxes[0].x,boxes[0].y,boxes[0].w,boxes[0].h);
+				ctx.strokeStyle = "black";
+				//ctx.fillStyle = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; 
+				//ctx.fillStyle = `rgb(${(inc*ran%255)}, ${(inc*ran%255)},${(inc*ran%255)})`; 
+ctx.fillStyle = `rgb(${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))})`;
+				ctx.fill();
+				ctx.stroke(); 
 	}
 }
 requestAnimationFrame(runAnimation);
