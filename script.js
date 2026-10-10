@@ -2,6 +2,15 @@
 const ctx = canvas.getContext('2d');
 let LEFT, RIGHT, UP, DOWN;
 
+let box ={
+	x:0,
+	y:0,
+	w:50,
+	h:50
+};
+let boxes= [];
+boxes.push[box];
+
 // Handle key strokes 
 canvas.addEventListener('keydown', function(e) {
 	if (e.keyCode === 37) LEFT = true;
