@@ -2,7 +2,7 @@
 const ctx = canvas.getContext('2d');
 let LEFT, RIGHT, UP, DOWN;
 let boxes= [];
-for(let i = 0;i<200;i++){
+for(let i = 0;i<400;i++){
 	let box ={
 	x:randInt(0,canvas.clientWidth-10),
 	y:0,
@@ -79,8 +79,10 @@ for(let i = 0;i<boxes.length;i++){
 				ctx.stroke(); 
 				if(boxes[i].y < canvas.clientHeight - 10) boxes[i].y += randInt(1,10);
 				if(boxes[i].y >= canvas.clientHeight - 15){boxes[i].y=0;}
-				if(inc == 0 && boxes[i].x > 0 && boxes[i].x < canvas.clientWidth -10 ) boxes[i].x -= randInt(1,10);
-				if(inc == 1 && boxes[i].x > 0 && boxes[i].x < canvas.clientWidth -10 ) boxes[i].x += randInt(1,10);
+				if(inc == 0 ) boxes[i].x -= randInt(1,10);
+				if(inc == 1 ) boxes[i].x += randInt(1,10);
+				if(boxes[i].x > 0 ){boxes[i].x=5;}
+				if(boxes[i].x < canvas.clientWidth -10 ){boxes[i].x = canvas.clientWidth -15;}
 				}
 	}
 }
