@@ -31,7 +31,7 @@ function randInt(min, max) {
 
 // --- ADDED FOR TIMING CONTROL ---
 let lastTime = 0;
-const fps = 1; // Change this number to adjust speed (frames per second)
+const fps = 5; // Change this number to adjust speed (frames per second)
 const interval = 1000 / fps; // Milliseconds between frames
 let inc = 0;
 
@@ -73,7 +73,7 @@ ctx.fillStyle = `rgb(${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))}, $
 				ctx.fillStyle = 'black';
 				ctx.fill();
 				ctx.stroke(); 
-				if(boxes[0].y <= 200) boxes[0].y += 5;
+				if(boxes[0].y <= 400) boxes[0].y += 5;
 				if(inc == 0) boxes[0].x -= 5;
 				if(inc == 1) boxes[0].x += 5;
 	}
