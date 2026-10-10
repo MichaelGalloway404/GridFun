@@ -51,8 +51,8 @@ function runAnimation(timestamp) {
 				ctx.fill();
 				ctx.stroke(); 
 				
-			}if (inc >= 255){inc = 0;}
-		}
+			}
+		}if (inc >= 255){inc = 0;}
 	}
 }
 requestAnimationFrame(runAnimation);
