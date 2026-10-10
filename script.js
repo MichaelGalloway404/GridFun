@@ -31,7 +31,7 @@ function randInt(min, max) {
 
 // --- ADDED FOR TIMING CONTROL ---
 let lastTime = 0;
-const fps = 60; // Change this number to adjust speed (frames per second)
+const fps = 1; // Change this number to adjust speed (frames per second)
 const interval = 1000 / fps; // Milliseconds between frames
 let inc = 0;
 
@@ -46,7 +46,7 @@ function runAnimation(timestamp) {
 	if (deltaTime >= interval) {
 		// Adjust lastTime, accounting for any leftover milliseconds
 		lastTime = timestamp - (deltaTime % interval);
-  inc++;
+  //inc++;
 		ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 		/*for (let i = 0; i < 12*5; i++) {
 			let ran = randInt(0,254);
@@ -64,14 +64,15 @@ ctx.fillStyle = `rgb(${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))}, $
 				if (inc >= 255){inc = 0;}
 			}
 		}*/
-ctx.beginPath(); 
-				ctx.rect(boxes[0].x,boxes[0].y,boxes[0].w,boxes[0].h);
+    ctx.beginPath(); 
+				ctx.rect(boxes[0].x+100,boxes[0].y,boxes[0].w,boxes[0].h);
 				ctx.strokeStyle = "black";
 				//ctx.fillStyle = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; 
 				//ctx.fillStyle = `rgb(${(inc*ran%255)}, ${(inc*ran%255)},${(inc*ran%255)})`; 
-ctx.fillStyle = `rgb(${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))})`;
+				ctx.fillStyle = 'black';
 				ctx.fill();
 				ctx.stroke(); 
+				if(boxes[0].y <= 200) boxes[0].y += 1;
 	}
 }
 requestAnimationFrame(runAnimation);
