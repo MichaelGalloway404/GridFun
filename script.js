@@ -31,7 +31,7 @@ function randInt(min, max) {
 
 // --- ADDED FOR TIMING CONTROL ---
 let lastTime = 0;
-const fps = 5; // Change this number to adjust speed (frames per second)
+const fps = 30; // Change this number to adjust speed (frames per second)
 const interval = 1000 / fps; // Milliseconds between frames
 let inc = 0;
 
