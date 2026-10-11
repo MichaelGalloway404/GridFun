@@ -74,6 +74,7 @@ for(let i = 0;i<boxes.length;i++){
 				ctx.strokeStyle = "black";
 				//ctx.fillStyle = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; 
 				//ctx.fillStyle = `rgb(${(inc*ran%255)}, ${(inc*ran%255)},${(inc*ran%255)})`; 
+    boxes[i].color = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; 
 				ctx.fillStyle = boxes[i].color;
 				ctx.fill();
 				ctx.stroke(); 
