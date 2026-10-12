@@ -5,7 +5,7 @@ let boxes = [];
 let grid = {};
 for ( let i = 0; i< canvas.clientWidth; i++){
 	for ( let j = 0; j< canvas.clientWidth; j++){
-		grid[i.toString()+j.toString()]=[i,j];
+		grid[i.toString()+j.toString()]= 't';
 		}}
 for (let i = 0; i < canvas.clientWidth/5; i += 5) {
 	let box = {
