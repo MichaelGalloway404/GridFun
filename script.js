@@ -2,6 +2,11 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
 let LEFT, RIGHT, UP, DOWN;
 let boxes = [];
+let grid = {};
+for ( let i = 0; i< canvas.clientWidth; i++){
+	for ( let j = 0; j< canvas.clientWidth; j++){
+		grid[j]=3;
+		}}
 for (let i = 0; i < canvas.clientWidth-5; i++) {
 	let box = {
 		x: i*5,
