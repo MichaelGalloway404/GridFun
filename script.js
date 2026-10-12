@@ -2,10 +2,10 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
 let LEFT, RIGHT, UP, DOWN;
 let boxes = [];
-for (let i = 0; i < 2000; i++) {
+for (let i = 0; i < canvas.clientWidth-5; i++) {
 	let box = {
-		x: randInt(0, canvas.clientWidth - 10),
-		y: randInt(0, 200),
+		x: i*5,
+		y: 5,
 		w: 5,
 		h: 5,
 		color: `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`
