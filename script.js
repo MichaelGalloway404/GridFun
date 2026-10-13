@@ -41,6 +41,7 @@ const interval = 1000 / fps; // Milliseconds between frames
 let inc = 0;
 
 let choice = [0,5,10];
+let choices = [0,5,10,-5,-10];
 
 function runAnimation(timestamp) {
 	requestAnimationFrame(runAnimation);
@@ -81,13 +82,15 @@ ctx.fillStyle = `rgb(${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))}, $
 			ctx.stroke();
 			randHorizontal = randInt(0, 2);
 			if (boxes[i].y < canvas.clientHeight - 5) {
-				boxes[i].y += randInt(1, 10);
+				//boxes[i].y += randInt(1, 10);
+     boxes[i].y += choice[randHorizontal];
 			}
 			if (boxes[i].y >= canvas.clientHeight - 6) {
 				boxes[i].y = 0;
 			}
-			if (randHorizontal == 0) boxes[i].x -= randInt(1, 10);
-			if (randHorizontal == 1) boxes[i].x += randInt(1, 10);
+			//if (randHorizontal == 0) boxes[i].x -= randInt(1, 10);
+			//if (randHorizontal == 1) boxes[i].x += randInt(1, 10);
+boxes[i].x += choices[randInt(0,4)];
 			if (boxes[i].x < 0) {
 				boxes[i].x = 5;
 			}
