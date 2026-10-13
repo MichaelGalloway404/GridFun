@@ -3,8 +3,8 @@ const ctx = canvas.getContext('2d');
 let LEFT, RIGHT, UP, DOWN;
 let boxes = [];
 let grid = {};
-for ( let i = 0; i< canvas.clientWidth; i++){
-	for ( let j = 0; j< canvas.clientWidth; j++){
+for ( let i = 0; i< canvas.clientWidth/5; i++){
+	for ( let j = 0; j< canvas.clientHeight/5; j++){
 		grid[i.toString()+j.toString()]= 't';
 		}}
 for (let i = 0; i < canvas.clientWidth/5; i += 5) {
