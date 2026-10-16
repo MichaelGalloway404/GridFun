@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 let LEFT, RIGHT, UP, DOWN;
 let boxes = [];
 let grid = {};
-let squareSize = 20;
+let squareSize = 2;
 for (let i = 0; i < canvas.clientWidth / squareSize; i++) {
 	for (let j = 0; j < canvas.clientHeight / squareSize; j++) {
 		grid[(i * squareSize).toString() + '-' + (j * squareSize).toString()] = 't';
@@ -12,7 +12,7 @@ for (let i = 0; i < canvas.clientWidth / squareSize; i++) {
 // console.log(grid);
 for (let i = 0; i < canvas.clientWidth *30; i += squareSize) {
 	let box = {
-		x: i,
+		x: 300,
 		y: squareSize,
 		w: squareSize,
 		h: squareSize,
@@ -38,7 +38,7 @@ function randInt(min, max) {
 }
 // --- ADDED FOR TIMING CONTROL ---
 let lastTime = 0;
-const fps = 1; // Change this number to adjust speed (frames per second)
+const fps = 30; // Change this number to adjust speed (frames per second)
 const interval = 1000 / fps; // Milliseconds between frames
 let inc = 0;
 let choice = [0, squareSize, squareSize*2];
