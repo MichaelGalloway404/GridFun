@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 let LEFT, RIGHT, UP, DOWN;
 let boxes = [];
 let grid = {};
-let squareSize = 3;
+let squareSize = 4;
 for (let i = 0; i < canvas.clientWidth / squareSize; i++) {
 	for (let j = 0; j < canvas.clientHeight / squareSize; j++) {
 		grid[(i * squareSize).toString() + '-' + (j * squareSize).toString()] = 't';
