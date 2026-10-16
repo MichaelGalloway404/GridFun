@@ -41,8 +41,10 @@ let lastTime = 0;
 const fps = 30; // Change this number to adjust speed (frames per second)
 const interval = 1000 / fps; // Milliseconds between frames
 let inc = 0;
-let choice = [0, squareSize, squareSize*2];
-let choices = [0, squareSize, squareSize*2, -squareSize, -squareSize*2];
+let choice = [0, squareSize, squareSize];
+let choices = [0, squareSize, squareSize, -squareSize, -squareSize];
+//let choice = [0, squareSize, squareSize*2];
+//let choices = [0, squareSize, squareSize*2, -squareSize, -squareSize*2];
 
 function runAnimation(timestamp) {
 	requestAnimationFrame(runAnimation);
