@@ -13,7 +13,7 @@ for (let i = 0; i < canvas.clientWidth / squareSize; i++) {
 for (let i = 0; i < canvas.clientWidth *30; i += squareSize) {
 	let box = {
 		x: 300,
-		y: squareSize,
+		y: 300,
 		w: squareSize,
 		h: squareSize,
 		color: `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`
