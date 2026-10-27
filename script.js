@@ -60,24 +60,29 @@ class ActiveRagdoll {
         this.bones.push({ pA: this.points[indexA], pB: this.points[indexB], length });
     }
 
-    update() {
+        update() {
         loopTimer++;
 
         // State Loop Controller
-        if (muscleState === "ACTIVE" && loopTimer > 240) { // Walk for 4 seconds
+        if (muscleState === "ACTIVE" && loopTimer > 240) { 
             muscleState = "LIMP";
             loopTimer = 0;
-        } else if (muscleState === "LIMP" && loopTimer > 180) { // Stay down for 3 seconds
+        } else if (muscleState === "LIMP" && loopTimer > 180) { 
             this.resetPosition(100, GROUND_Y);
             muscleState = "ACTIVE";
             loopTimer = 0;
         }
 
-        // --- PHASE 1: Apply Muscles (If Active) ---
+        // --- PHASE 1: Apply Muscles (ONLY If Active) ---
         if (muscleState === "ACTIVE") {
             this.animFrame += 0.06;
-            this.x += 1.2; // Move reference system forward
+            this.x += 1.2; // Move reference system forward only while alive
             this.applyMuscleForces();
+        } else {
+            // Keep the invisible reference system anchor glued directly to the 
+            // physical falling pelvis particle so it doesn't build phantom spring force
+            this.x = this.points[2].x; 
+            this.y = this.points[2].y;
         }
 
         // --- PHASE 2: Standard Verlet Integration Engine ---
@@ -102,6 +107,7 @@ class ActiveRagdoll {
                 const dx = b.pB.x - b.pA.x;
                 const dy = b.pB.y - b.pA.y;
                 const dist = Math.hypot(dx, dy);
+                if (dist === 0) return; // Prevent divide-by-zero glitches
                 const diff = b.length - dist;
                 const percent = (diff / dist) / 2;
                 const offsetX = dx * percent;
@@ -114,6 +120,7 @@ class ActiveRagdoll {
             });
         }
     }
+
 
     // This mimics Euphoria's internal muscle contractions.
     // It compares physical joint coordinates with ideal math targets, 
