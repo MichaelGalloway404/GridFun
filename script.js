@@ -286,3 +286,59 @@ function loop() {
     if (bot2.health > 0) bot2.draw();
 
     // Process & Track Active Bullet Objects
+for (let i = projectiles.length - 1; i >= 0; i--) {
+const p = projectiles[i];
+p.x += p.vx;
+p.y += p.vy;
+let hit = false;
+// Bullet hitting platforms checking loops
+platforms.forEach(plat => {
+if (p.x > plat.x && p.x < plat.x + plat.width && p.y > plat.y && p.y < plat.y + plat.height) {
+hit = true;
+}
+});
+// Target Body collision detection scans
+if (!hit && bot1.health > 0 && p.owner !== bot1) {
+if (p.x > bot1.x - bot1.width / 2 && p.x < bot1.x + bot1.width / 2 && p.y > bot1.y && p.y < bot1.y + bot1.height) {
+bot1.takeDamage(20);
+hit = true;
+if (bot1.health <= 0) {
+ragdolls.push(new Ragdoll(bot1.x, bot1.y + 20, bot1.color));
+setTimeout(() => resetFighter(bot1), 2500); // Respawn after 2.5 seconds
+}
+}
+}
+if (!hit && bot2.health > 0 && p.owner !== bot2) {
+if (p.x > bot2.x - bot2.width / 2 && p.x < bot2.x + bot2.width / 2 && p.y > bot2.y && p.y < bot2.y + bot2.height) {
+bot2.takeDamage(20);
+hit = true;
+if (bot2.health <= 0) {
+ragdolls.push(new Ragdoll(bot2.x, bot2.y + 20, bot2.color));
+setTimeout(() => resetFighter(bot2), 2500); // Respawn
+}
+}
+}
+// Clean out bounds or collided elements
+if (hit || p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+projectiles.splice(i, 1);
+} else {
+// Draw projectiles particles inline directly
+ctx.beginPath();
+ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+ctx.fillStyle = p.owner.color === "#2196f3" ? "#64b5f6" : "#ff8a65";
+ctx.fill();
+}
+}
+// Process & Track Active Deployed Ragdoll Elements
+for (let i = ragdolls.length - 1; i >= 0; i--) {
+const rag = ragdolls[i];
+rag.update();
+rag.draw();
+if (rag.alpha <= 0) {
+ragdolls.splice(i, 1);
+}
+}
+requestAnimationFrame(loop);
+}
+// Start Combat Sandbox Engine Init
+loop();
