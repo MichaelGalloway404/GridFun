@@ -1,128 +1,187 @@
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext('2d');
-let LEFT, RIGHT, UP, DOWN;
-let boxes = [];
-let grid = {};
-let squareSize = 4;
-for (let i = 0; i < canvas.clientWidth / squareSize; i++) {
-	for (let j = 0; j < canvas.clientHeight / squareSize; j++) {
-		grid[(i * squareSize).toString() + '-' + (j * squareSize).toString()] = 't';
-	}
-}
-// console.log(grid);
-for (let i = 0; i < canvas.clientWidth *30; i += squareSize) {
-	let box = {
-		x: 300,
-		y: 300,
-		w: squareSize,
-		h: squareSize,
-		color: `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`
-	};
-	boxes.push(box);
-}
-// // Handle key strokes 
-// canvas.addEventListener('keydown', function(e) {
-// 	if (e.keyCode === 37) LEFT = true;
-// 	if (e.keyCode === 38) UP = true;
-// 	if (e.keyCode === 39) RIGHT = true;
-// 	if (e.keyCode === 40) DOWN = true;
-// });
-// canvas.addEventListener('keyup', function(e) {
-// 	if (e.keyCode === 37) LEFT = false;
-// 	if (e.keyCode === 38) UP = false;
-// 	if (e.keyCode === 39) RIGHT = false;
-// 	if (e.keyCode === 40) DOWN = false;
-// });
-function randInt(min, max) {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-// --- ADDED FOR TIMING CONTROL ---
-let lastTime = 0;
-const fps = 60; // Change this number to adjust speed (frames per second)
-const interval = 1000 / fps; // Milliseconds between frames
-let inc = 0;
-let choice = [0, squareSize, squareSize];
-let choices = [0, squareSize, squareSize, -squareSize, -squareSize];
-//let choice = [0, squareSize, squareSize*2];
-//let choices = [0, squareSize, squareSize*2, -squareSize, -squareSize*2];
+// Assumes your HTML has: <canvas id="gameCanvas" width="800" height="600"></canvas>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-function runAnimation(timestamp) {
-	requestAnimationFrame(runAnimation);
-	// Calculate how much time passed since the last render
-	const deltaTime = timestamp - lastTime;
-	// Only draw if enough time has passed
-	if (deltaTime >= interval) {
-		// Adjust lastTime, accounting for any leftover milliseconds
-		lastTime = timestamp - (deltaTime % interval);
-		//inc++;
-		ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-		/*for (let i = 0; i < 12*5; i++) {
-			let ran = randInt(0,254);
-			for (let j = 0; j < 12*5; j++) {
-				ctx.beginPath(); 
-				ctx.rect(i * 10, j * 10, 50, 50);
-				ctx.strokeStyle = "black";
-				//ctx.fillStyle = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; 
-				//ctx.fillStyle = `rgb(${(inc*ran%255)}, ${(inc*ran%255)},${(inc*ran%255)})`; 
-ctx.fillStyle = `rgb(${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))}, ${randInt(0,(inc*ran%255))})`;
-				ctx.fill();
-				ctx.stroke(); 
-				if (inc >= 255){inc = 0;}
-			}
-		}*/
-		for (let i = 0; i < boxes.length; i++) {
-			ctx.beginPath();
-			ctx.rect(boxes[i].x, boxes[i].y, boxes[i].w, boxes[i].h);
-			// init first boxes spot to taken
-			grid[boxes[i].x.toString() + "-" + boxes[i].y.toString()] = 'f';
-			ctx.strokeStyle = 'black';
-			//ctx.fillStyle = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`; 
-			//ctx.fillStyle = `rgb(${(inc*ran%255)}, ${(inc*ran%255)},${(inc*ran%255)})`; 
-			// boxes[i].color = `rgb(${randInt(0,255)}, ${randInt(0,255)}, ${randInt(0,255)})`;
-			ctx.fillStyle = boxes[i].color;
-			ctx.fill();
-			ctx.stroke();
-			// console.log(boxes[0].x);
-			randHorizontal = randInt(0, 2);
-			// console.log(grid[boxes[i].x.toString()+"-"+boxes[i].y.toString()]);
-			if (boxes[i].y < canvas.clientHeight - squareSize) {
-				//boxes[i].y += randInt(1, 10);
-				if (grid[boxes[i].x.toString() + "-" + (boxes[i].y + choice[randHorizontal]).toString()] != 'f') {
-					grid[boxes[i].x.toString() + "-" + boxes[i].y.toString()] = 't'
-					boxes[i].y += choice[randHorizontal];
-					grid[boxes[i].x.toString() + "-" + boxes[i].y.toString()] = 'f'
-				}
-			}
-			if (boxes[i].y >= canvas.clientHeight - squareSize) {
-				if (grid[boxes[i].x.toString() + "-" + (0).toString()] = 'f') {
-					grid[boxes[i].x.toString() + "-" + boxes[i].y.toString()] = 't'
-					boxes[i].y = 0;
-					grid[boxes[i].x.toString() + "-" + boxes[i].y.toString()] = 'f'
-				}
-			}
-			//if (randHorizontal == 0) boxes[i].x -= randInt(1, 10);
-			//if (randHorizontal == 1) boxes[i].x += randInt(1, 10);
-			let newX = choices[randInt(0, 4)]
-			if (grid[(boxes[i].x + newX).toString() + "-" + boxes[i].y.toString()] != 'f') {
-				grid[boxes[i].x.toString() + "-" + boxes[i].y.toString()] = 't'
-				boxes[i].x += newX;
-				grid[boxes[i].x.toString() + "-" + boxes[i].y.toString()] = 'f'
-			}
-			if (boxes[i].x < 0) {
-				if (grid[(squareSize).toString() + "-" + boxes[i].y.toString()] != 'f') {
-					grid[boxes[i].x.toString() + "-" + boxes[i].y.toString()] = 't'
-					boxes[i].x = squareSize;
-					grid[boxes[i].x.toString() + "-" + boxes[i].y.toString()] = 'f'
-				}
-			}
-			if (boxes[i].x > canvas.clientWidth - squareSize) {
-				if (grid[(canvas.clientWidth - squareSize).toString() + "-" + boxes[i].y.toString()] != 'f') {
-					grid[boxes[i].x.toString() + "-" + boxes[i].y.toString()] = 't'
-					boxes[i].x = canvas.clientWidth - squareSize;
-					grid[boxes[i].x.toString() + "-" + boxes[i].y.toString()] = 'f'
-				}
-			}
-		}
-	}
+// --- Game Configurations ---
+const GRAVITY = 0.15;
+const BOUNCE = 0.8; // Bounciness off pegs and walls
+
+// --- Game Objects State ---
+let ball = null; // null means ready to shoot
+const canon = {
+    x: canvas.width / 2,
+    y: 40,
+    angle: Math.PI / 2, // Points straight down initially
+    length: 50
+};
+
+let pegs = [];
+
+// --- Initialize Peg Grid ---
+function initPegs() {
+    pegs = [];
+    const rows = 6;
+    const cols = 9;
+    const spacingX = 70;
+    const spacingY = 60;
+    const startX = (canvas.width - (cols - 1) * spacingX) / 2;
+    const startY = 180;
+
+    for (let r = 0; r < rows; r++) {
+        // Offset alternate rows for a staggered Peggle layout
+        const offsetX = (r % 2 === 0) ? 0 : spacingX / 2;
+        for (let c = 0; c < (r % 2 === 0 ? cols : cols - 1); c++) {
+            pegs.push({
+                x: startX + c * spacingX + offsetX,
+                y: startY + r * spacingY,
+                radius: 10,
+                isHit: false,
+                color: Math.random() > 0.2 ? "#ff5722" : "#2196f3" // Orange (normal) vs Blue (special)
+            });
+        }
+    }
 }
-requestAnimationFrame(runAnimation);
+
+// --- Input Handling (Universal Pointer Events) ---
+// Pointer events automatically combine mouse, touch screens, and trackpads/styluses seamlessly.
+function handlePointer(e) {
+    const rect = canvas.getBoundingClientRect();
+    // Support proper scaling if CSS sizes the canvas differently than its internal resolution
+    const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : e.clientY);
+
+    const pointerX = ((clientX - rect.left) / rect.width) * canvas.width;
+    const pointerY = ((clientY - rect.top) / rect.height) * canvas.height;
+
+    // Aim the cannon toward the pointer position
+    canon.angle = Math.atan2(pointerY - canon.y, pointerX - canon.x);
+}
+
+// Fire the ball on tap/click release
+function launchBall() {
+    if (ball !== null) return; // Prevent multiple balls on screen
+
+    ball = {
+        x: canon.x + Math.cos(canon.angle) * canon.length,
+        y: canon.y + Math.sin(canon.angle) * canon.length,
+        vx: Math.cos(canon.angle) * 7, // Fire velocity
+        vy: Math.sin(canon.angle) * 7,
+        radius: 8
+    };
+}
+
+// Attach listeners for touch, mouse, and trackpads safely combined
+canvas.addEventListener("pointerdown", (e) => {
+    handlePointer(e);
+    launchBall();
+});
+
+canvas.addEventListener("pointermove", (e) => {
+    handlePointer(e);
+});
+
+// Avoid standard browser pull-to-refresh / scrolling when interacting with the game canvas on mobile
+canvas.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
+canvas.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
+
+
+// --- Physics & Updates ---
+function update() {
+    if (ball) {
+        // Apply Physics
+        ball.vy += GRAVITY;
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        // Wall Collisions (Left / Right)
+        if (ball.x - ball.radius < 0) {
+            ball.x = ball.radius;
+            ball.vx = -ball.vx * BOUNCE;
+        } else if (ball.x + ball.radius > canvas.width) {
+            ball.x = canvas.width - ball.radius;
+            ball.vx = -ball.vx * BOUNCE;
+        }
+
+        // Ceiling Collision
+        if (ball.y - ball.radius < 0) {
+            ball.y = ball.radius;
+            ball.vy = -ball.vy * BOUNCE;
+        }
+
+        // Peg Collisions
+        pegs.forEach(peg => {
+            const dx = ball.x - peg.x;
+            const dy = ball.y - peg.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < ball.radius + peg.radius) {
+                peg.isHit = true;
+
+                // Elastic collision response vector
+                const nx = dx / distance;
+                const ny = dy / distance;
+
+                // Push ball out of overlapping peg zone
+                ball.x = peg.x + nx * (ball.radius + peg.radius);
+                ball.y = peg.y + ny * (ball.radius + peg.radius);
+
+                // Reflect velocity across normal vector
+                const dotProduct = ball.vx * nx + ball.vy * ny;
+                ball.vx = (ball.vx - 2 * dotProduct * nx) * BOUNCE;
+                ball.vy = (ball.vy - 2 * dotProduct * ny) * BOUNCE;
+            }
+        });
+
+        // Out of Bounds / Bottom Reset (Clears lit pegs)
+        if (ball.y - ball.radius > canvas.height) {
+            ball = null;
+            pegs = pegs.filter(peg => !peg.isHit); // Remove hit pegs
+            if (pegs.length === 0) initPegs();    // Respawn grid if board is wiped
+        }
+    }
+}
+
+// --- Render Engine ---
+function draw() {
+    // Clear screen
+    ctx.fillStyle = "#121214";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw Pegs
+    pegs.forEach(peg => {
+        ctx.beginPath();
+        ctx.arc(peg.x, peg.y, peg.radius, 0, Math.PI * 2);
+        // Dim the peg if hit, otherwise use original color
+        ctx.fillStyle = peg.isHit ? "#444444" : peg.color;
+        ctx.fill();
+        ctx.closePath();
+    });
+
+    // Draw Cannon
+    ctx.save();
+    ctx.translate(canon.x, canon.y);
+    ctx.rotate(canon.angle);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, -10, canon.length, 20); // Draws cannon barrel
+    ctx.restore();
+
+    // Draw Ball
+    if (ball) {
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.closePath();
+    }
+}
+
+// --- Main Loop ---
+function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+// Start Game
+initPegs();
+loop();
