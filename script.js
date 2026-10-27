@@ -2,7 +2,7 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 // --- Physics Configurations ---
-const GRAVITY = 0.28;
+const GRAVITY = 0.68;
 const FRICTION = 0.31;
 const GROUND_Y = 600;
 
@@ -23,7 +23,7 @@ class ActiveRagdoll {
         // [x, y, oldX, oldY, radius, label]
         this.addPoint(startX, startY - 80, 10, "head");      // 0
         this.addPoint(startX, startY - 55, 3,  "neck");      // 1
-        this.addPoint(startX, startY - 25, 4,  "pelvis");    // 2
+        this.addPoint(startX, startY - 25, 40,  "pelvis");    // 2
         this.addPoint(startX - 5, startY - 55, 2, "l_shldr"); // 3
         this.addPoint(startX + 15, startY - 55, 2, "r_shldr"); // 4
         this.addPoint(startX - 20, startY - 35, 2, "l_elbow"); // 5
@@ -194,7 +194,7 @@ class ActiveRagdoll {
     }
 }
 
-const character = new ActiveRagdoll(100, 100);
+const character = new ActiveRagdoll(20, 20);
 
 function loop() {
     ctx.fillStyle = "#121214";
