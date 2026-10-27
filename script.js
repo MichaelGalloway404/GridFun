@@ -1,47 +1,47 @@
-const canvas = document.getElementById("gameCanvas");
+ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 // --- Physics Configurations ---
-const GRAVITY = 0.3;
+const GRAVITY = 0.28;
 const FRICTION = 0.98;
 const GROUND_Y = 500;
 
-// --- State Machine ---
-// States: "WALKING", "STANDING", "RAGDOLL"
-let currentState = "WALKING";
-let stateTimer = 0; 
+// --- State Engine ---
+// "ACTIVE": Muscles are firing to maintain posture and walk.
+// "LIMP": Muscles completely shut off (pure limp ragdoll collapse).
+let muscleState = "ACTIVE";
+let loopTimer = 0;
 
-// --- Jointed Character Structure ---
-class StickFigure {
+class ActiveRagdoll {
     constructor(startX, startY) {
         this.x = startX;
         this.y = startY;
-        this.color = "#ffffff";
+        this.animFrame = 0;
+        
         this.points = [];
-        this.constraints = [];
-        this.animationFrame = 0;
+        this.bones = [];
 
-        // Create Physics Nodes (Verlet Particles)
+        // 1. Create Physical Verlet Particles (The Mass points)
         // [x, y, oldX, oldY, radius, label]
         this.addPoint(startX, startY - 80, 10, "head");      // 0
-        this.addPoint(startX, startY - 55, 0, "neck");       // 1
-        this.addPoint(startX, startY - 30, 0, "pelvis");     // 2
-        this.addPoint(startX - 15, startY - 55, 0, "l_shldr"); // 3
-        this.addPoint(startX + 15, startY - 55, 0, "r_shldr"); // 4
-        this.addPoint(startX - 20, startY - 35, 0, "l_elbow"); // 5
-        this.addPoint(startX + 20, startY - 35, 0, "r_elbow"); // 6
-        this.addPoint(startX - 22, startY - 15, 0, "l_hand");  // 7
-        this.addPoint(startX + 22, startY - 15, 0, "r_hand");  // 8
-        this.addPoint(startX - 12, startY - 15, 0, "l_knee");  // 9
-        this.addPoint(startX + 12, startY - 15, 0, "r_knee");  // 10
-        this.addPoint(startX - 15, startY + 5, 4, "l_foot");   // 11
-        this.addPoint(startX + 15, startY + 5, 4, "r_foot");   // 12
+        this.addPoint(startX, startY - 55, 3,  "neck");      // 1
+        this.addPoint(startX, startY - 25, 4,  "pelvis");    // 2
+        this.addPoint(startX - 15, startY - 55, 2, "l_shldr"); // 3
+        this.addPoint(startX + 15, startY - 55, 2, "r_shldr"); // 4
+        this.addPoint(startX - 20, startY - 35, 2, "l_elbow"); // 5
+        this.addPoint(startX + 20, startY - 35, 2, "r_elbow"); // 6
+        this.addPoint(startX - 22, startY - 15, 2, "l_hand");  // 7
+        this.addPoint(startX + 22, startY - 15, 2, "r_hand");  // 8
+        this.addPoint(startX - 10, startY - 15, 3, "l_knee");  // 9
+        this.addPoint(startX + 10, startY - 15, 3, "r_knee");  // 10
+        this.addPoint(startX - 12, startY + 5,  4, "l_foot");  // 11
+        this.addPoint(startX + 12, startY + 5,  4, "r_foot");  // 12
 
-        // Build structural skeleton bones
+        // 2. Structural Rigid Distances (Skeletal Constraints)
         this.link(0, 1, 25);  // Head to Neck
-        this.link(1, 2, 35);  // Spine (Neck to Pelvis)
-        this.link(1, 3, 15);  // Collarbone Left
-        this.link(1, 4, 15);  // Collarbone Right
+        this.link(1, 2, 30);  // Spine (Neck to Pelvis)
+        this.link(1, 3, 15);  // Left Collar
+        this.link(1, 4, 15);  // Right Collar
         this.link(3, 5, 20);  // Left Upper Arm
         this.link(5, 7, 20);  // Left Forearm
         this.link(4, 6, 20);  // Right Upper Arm
@@ -53,86 +53,34 @@ class StickFigure {
     }
 
     addPoint(x, y, r, label) {
-        this.points.push({ x, y, oldX: x, oldY: y, radius: r, label, isStatic: false });
+        this.points.push({ x, y, oldX: x, oldY: y, radius: r, label });
     }
 
-    link(indexA, indexB, customLength) {
-        const pA = this.points[indexA];
-        const pB = this.points[indexB];
-        this.constraints.push({ pA, pB, length: customLength });
+    link(indexA, indexB, length) {
+        this.bones.push({ pA: this.points[indexA], pB: this.points[indexB], length });
     }
 
     update() {
-        stateTimer++;
+        loopTimer++;
 
-        // State Transitions based on time ticks
-        if (currentState === "WALKING" && stateTimer > 180) { // Walk for 3 seconds
-            currentState = "STANDING";
-            stateTimer = 0;
-        } else if (currentState === "STANDING" && stateTimer > 120) { // Stand still for 2 seconds
-            currentState = "RAGDOLL";
-            stateTimer = 0;
-            // Give a slight forward dynamic nudge when collapsing
-            this.points.forEach(p => p.oldX -= 1.5);
+        // State Loop Controller
+        if (muscleState === "ACTIVE" && loopTimer > 240) { // Walk for 4 seconds
+            muscleState = "LIMP";
+            loopTimer = 0;
+        } else if (muscleState === "LIMP" && loopTimer > 180) { // Stay down for 3 seconds
+            this.resetPosition(100, GROUND_Y);
+            muscleState = "ACTIVE";
+            loopTimer = 0;
         }
 
-        if (currentState === "WALKING" || currentState === "STANDING") {
-            this.animateKinematic();
-        } else {
-            this.simulateRagdollPhysics();
-        }
-    }
-
-    // Procedural Animation System (Driven by Math when alive)
-    animateKinematic() {
-        if (currentState === "WALKING") {
-            this.x += 1.5; // Translate body root position forward
-            this.animationFrame += 0.07;
-        } else {
-            // Calm down animation toward zero stance cycles
-            this.animationFrame += (0 - this.animationFrame) * 0.1;
+        // --- PHASE 1: Apply Muscles (If Active) ---
+        if (muscleState === "ACTIVE") {
+            this.animFrame += 0.06;
+            this.x += 1.2; // Move reference system forward
+            this.applyMuscleForces();
         }
 
-        // Keep root core pinned to global movement positions
-        const spineY = GROUND_Y - 30;
-        const pts = this.points;
-
-        pts[2].x = this.x; // Pelvis base reference
-        pts[2].y = spineY + Math.abs(Math.sin(this.animationFrame * 2)) * 3; // Bobbing height accentuation
-        pts[1].x = this.x; // Neck line target
-        pts[1].y = pts[2].y - 35;
-        pts[0].x = this.x; // Head tracking placement
-        pts[0].y = pts[1].y - 25;
-
-        pts[3].x = this.x - 12; pts[3].y = pts[1].y + 2; // Shoulders anchors
-        pts[4].x = this.x + 12; pts[4].y = pts[1].y + 2;
-
-        // Angular math calculations tracking strides
-        const leftStride = Math.sin(this.animationFrame);
-        const rightStride = Math.sin(this.animationFrame + Math.PI);
-
-        // Legs Procedural Keyframing Math
-        pts[9].x = this.x - 5 + leftStride * 8;   pts[9].y = pts[2].y + 20;  // L Knee
-        pts[11].x = this.x - 5 + leftStride * 14; pts[11].y = GROUND_Y;      // L Foot
-        pts[10].x = this.x + 5 + rightStride * 8;  pts[10].y = pts[2].y + 20; // R Knee
-        pts[12].x = this.x + 5 + rightStride * 14; pts[12].y = GROUND_Y;     // R Foot
-
-        // Arms matching counter swings
-        pts[5].x = this.x - 10 + rightStride * 6; pts[5].y = pts[3].y + 15; // L Elbow
-        pts[7].x = this.x - 12 + rightStride * 8; pts[7].y = pts[5].y + 15; // L Hand
-        pts[6].x = this.x + 10 + leftStride * 6;  pts[6].y = pts[4].y + 15; // R Elbow
-        pts[8].x = this.x + 12 + leftStride * 8;  pts[8].y = pts[6].y + 15; // R Hand
-
-        // Synchronize old positional points tracking values to zero out velocity builds before physics switch
-        this.points.forEach(p => {
-            p.oldX = p.x;
-            p.oldY = p.y;
-        });
-    }
-
-    // Fully Autonomous Particle Integration Engine (Driven by physics when dead)
-    simulateRagdollPhysics() {
-        // 1. Particle Velocity Integrator Updates
+        // --- PHASE 2: Standard Verlet Integration Engine ---
         this.points.forEach(p => {
             const vx = (p.x - p.oldX) * FRICTION;
             const vy = (p.y - p.oldY) * FRICTION;
@@ -141,101 +89,135 @@ class StickFigure {
             p.x += vx;
             p.y += vy + GRAVITY;
 
-            // Environmental Collisions (Floor plane clamping limits)
+            // Fluid Platform Ground Interaction
             if (p.y + p.radius > GROUND_Y) {
                 p.y = GROUND_Y - p.radius;
-                p.oldX += (p.x - p.oldX) * -0.4; // Ground Friction damping slide variables
+                p.oldX += (p.x - p.oldX) * -0.3; // Friction drag simulation
             }
-            // Screen boundaries loop configurations
-            if (p.x < p.radius) p.x = p.radius;
-            if (p.x > canvas.width - p.radius) p.x = canvas.width - p.radius;
         });
 
-        // 2. Solve Muscle/Bone Link Distance Constraints (Enforces strict rigid links)
-        for (let i = 0; i < 5; i++) {
-            this.constraints.forEach(c => {
-                const dx = c.pB.x - c.pA.x;
-                const dy = c.pB.y - c.pA.y;
+        // --- PHASE 3: Solve Bone Structural Lengths ---
+        for (let i = 0; i < 6; i++) {
+            this.bones.forEach(b => {
+                const dx = b.pB.x - b.pA.x;
+                const dy = b.pB.y - b.pA.y;
                 const dist = Math.hypot(dx, dy);
-                const diff = c.length - dist;
+                const diff = b.length - dist;
                 const percent = (diff / dist) / 2;
                 const offsetX = dx * percent;
                 const offsetY = dy * percent;
 
-                c.pA.x -= offsetX;
-                c.pA.y -= offsetY;
-                c.pB.x += offsetX;
-                c.pB.y += offsetY;
+                b.pA.x -= offsetX;
+                b.pA.y -= offsetY;
+                b.pB.x += offsetX;
+                b.pB.y += offsetY;
             });
         }
     }
 
+    // This mimics Euphoria's internal muscle contractions.
+    // It compares physical joint coordinates with ideal math targets, 
+    // and gently pulls the physical nodes into position.
+    applyMuscleForces() {
+        const pts = this.points;
+        const targetPos = [];
+        
+        // Define an ideal "procedural" kinematic target framework
+        const spineY = GROUND_Y - 32 + Math.abs(Math.sin(this.animFrame * 2)) * 3;
+        const leftStride = Math.sin(this.animFrame);
+        const rightStride = Math.sin(this.animFrame + Math.PI);
+
+        // Core Balance Keepers (Head & Torso targets)
+        targetPos[2] = { x: this.x, y: spineY };                    // Pelvis
+        targetPos[1] = { x: this.x, y: spineY - 30 };               // Neck
+        targetPos[0] = { x: this.x + 2, y: spineY - 55 };           // Head (leaning slightly forward)
+        targetPos[3] = { x: this.x - 12, y: spineY - 30 };          // L Shoulder
+        targetPos[4] = { x: this.x + 12, y: spineY - 30 };          // R Shoulder
+
+        // Walking Leg Targets
+        targetPos[9]  = { x: this.x - 4 + leftStride * 6,   y: spineY + 12 };  // L Knee
+        targetPos[11] = { x: this.x - 4 + leftStride * 12,  y: GROUND_Y };     // L Foot
+        targetPos[10] = { x: this.x + 4 + rightStride * 6,  y: spineY + 12 };  // R Knee
+        targetPos[12] = { x: this.x + 4 + rightStride * 12, y: GROUND_Y };     // R Foot
+
+        // Arm swing targets
+        targetPos[5] = { x: this.x - 8 + rightStride * 6, y: spineY - 15 };   // L Elbow
+        targetPos[7] = { x: this.x - 10 + rightStride * 8, y: spineY };       // L Hand
+        targetPos[6] = { x: this.x + 8 + leftStride * 6, y: spineY - 15 };    // R Elbow
+        targetPos[8] = { x: this.x + 10 + leftStride * 8, y: spineY };        // R Hand
+
+        // Apply contractive spring forces (Muscle Strength factor)
+        // Lower values mean looser muscles (more Euphoria style drunk/heavy weight swaying).
+        const muscleStrength = 0.09; 
+
+        this.points.forEach((p, idx) => {
+            if (targetPos[idx]) {
+                const target = targetPos[idx];
+                // Pull position forward slightly toward animation target frames
+                p.x += (target.x - p.x) * muscleStrength;
+                p.y += (target.y - p.y) * muscleStrength;
+            }
+        });
+    }
+
+    resetPosition(nx, ny) {
+        this.x = nx;
+        this.y = ny;
+        this.points.forEach(p => {
+            p.x = nx;
+            p.y = ny - 40;
+            p.oldX = p.x;
+            p.oldY = p.y;
+        });
+    }
+
     draw() {
-        ctx.strokeStyle = this.color;
+        ctx.strokeStyle = muscleState === "ACTIVE" ? "#4caf50" : "#f44336";
         ctx.lineWidth = 4;
         ctx.lineCap = "round";
 
-        // Draw structural bone constraints
-        this.constraints.forEach(c => {
+        // Draw Skeleton Link Paths
+        this.bones.forEach(b => {
             ctx.beginPath();
-            ctx.moveTo(c.pA.x, c.pA.y);
-            ctx.lineTo(c.pB.x, c.pB.y);
+            ctx.moveTo(b.pA.x, b.pA.y);
+            ctx.lineTo(b.pB.x, b.pB.y);
             ctx.stroke();
         });
 
-        // Explicitly render standard circular head cap
+        // Draw Head Node
         const head = this.points[0];
         ctx.beginPath();
         ctx.arc(head.x, head.y, head.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = muscleState === "ACTIVE" ? "#81c784" : "#e57373";
         ctx.fill();
         ctx.stroke();
 
-        // Render Current Status State Tag Text Information Above Unit
+        // Render UI HUD information
         ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-        ctx.font = "14px monospace";
+        ctx.font = "13px monospace";
         ctx.textAlign = "center";
-        ctx.fillText(`STATE: ${currentState}`, this.points[1].x, Math.min(this.points[0].y - 30, GROUND_Y - 110));
+        ctx.fillText(`NERVOUS SYSTEM FLUIDITY: ${muscleState}`, this.points[2].x, GROUND_Y - 130);
     }
 }
 
-// Instantiate actor starting on left side of viewport
-let testSubject = new StickFigure(100, GROUND_Y);
+// Instantiate Simulation Object
+const character = new ActiveRagdoll(100, GROUND_Y);
 
-// --- User Interaction Trigger (Tap / Click to manually force Ragdoll reset) ---
-window.addEventListener("pointerdown", () => {
-    // Reset structural simulation loops back to active start
-    currentState = "WALKING";
-    stateTimer = 0;
-    testSubject = new StickFigure(100, GROUND_Y);
-});
-
-// --- Core Update / Render Loop ---
 function loop() {
-    // Solid background paint pass
     ctx.fillStyle = "#121214";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Floor platform divider geometry line
+    // Floor Line Geometry rendering
     ctx.strokeStyle = "#27272c";
-    ctx.lineWidth = 6;
+    ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.moveTo(0, GROUND_Y);
     ctx.lineTo(canvas.width, GROUND_Y);
     ctx.stroke();
 
-    // Loop logic execution structures
-    testSubject.update();
-    testSubject.draw();
-
-    // Auto-loop instructions tracking resets 
-    if (currentState === "RAGDOLL" && stateTimer > 200) {
-        currentState = "WALKING";
-        stateTimer = 0;
-        testSubject = new StickFigure(100, GROUND_Y);
-    }
+    character.update();
+    character.draw();
 
     requestAnimationFrame(loop);
 }
-
 loop();
