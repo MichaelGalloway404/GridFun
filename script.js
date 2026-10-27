@@ -3,8 +3,8 @@ const ctx = canvas.getContext("2d");
 
 // --- Physics Configurations ---
 const GRAVITY = 0.28;
-const FRICTION = 0.98;
-const GROUND_Y = 500;
+const FRICTION = 0.31;
+const GROUND_Y = 600;
 
 // --- State Engine ---
 let muscleState = "ACTIVE"; // "ACTIVE" or "LIMP"
@@ -24,7 +24,7 @@ class ActiveRagdoll {
         this.addPoint(startX, startY - 80, 10, "head");      // 0
         this.addPoint(startX, startY - 55, 3,  "neck");      // 1
         this.addPoint(startX, startY - 25, 4,  "pelvis");    // 2
-        this.addPoint(startX - 15, startY - 55, 2, "l_shldr"); // 3
+        this.addPoint(startX - 5, startY - 55, 2, "l_shldr"); // 3
         this.addPoint(startX + 15, startY - 55, 2, "r_shldr"); // 4
         this.addPoint(startX - 20, startY - 35, 2, "l_elbow"); // 5
         this.addPoint(startX + 20, startY - 35, 2, "r_elbow"); // 6
@@ -38,8 +38,8 @@ class ActiveRagdoll {
         // 2. Structural Lengths (Rigid Skeletal Constraints)
         this.link(0, 1, 25);  // Head to Neck
         this.link(1, 2, 30);  // Spine
-        this.link(1, 3, 15);  // Left Collar
-        this.link(1, 4, 15);  // Right Collar
+        this.link(1, 3, 5);  // Left Collar
+        this.link(1, 4, 5);  // Right Collar
         this.link(3, 5, 20);  // Left Upper Arm
         this.link(5, 7, 20);  // Left Forearm
         this.link(4, 6, 20);  // Right Upper Arm
@@ -62,7 +62,7 @@ class ActiveRagdoll {
         loopTimer++;
 
         // State Loop Handler
-        if (muscleState === "ACTIVE" && loopTimer > 240) { 
+        if (muscleState === "ACTIVE" && loopTimer > 640) { 
             muscleState = "LIMP";
             loopTimer = 0;
         } else if (muscleState === "LIMP" && loopTimer > 180) { 
@@ -74,7 +74,7 @@ class ActiveRagdoll {
         // --- PHASE 1: Apply Muscle Forces (STRICTLY IF ALIVE) ---
         if (muscleState === "ACTIVE") {
             this.animFrame += 0.06;
-            this.x += 1.2; // Constant move forward speed
+            this.x += .5; // Constant move forward speed
             this.applyMuscleForces();
         } else {
             // Keep anchor systems locked directly to physics values
@@ -127,7 +127,7 @@ class ActiveRagdoll {
         const pts = this.points;
         const targetPos = [];
         
-        const spineY = GROUND_Y - 32 + Math.abs(Math.sin(this.animFrame * 2)) * 3;
+        const spineY = GROUND_Y - 49 + Math.abs(Math.sin(this.animFrame * 2)) * 3;
         const leftStride = Math.sin(this.animFrame);
         const rightStride = Math.sin(this.animFrame + Math.PI);
 
@@ -170,7 +170,7 @@ class ActiveRagdoll {
 
     draw() {
         ctx.strokeStyle = muscleState === "ACTIVE" ? "#4caf50" : "#f44336";
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 5;
         ctx.lineCap = "round";
 
         this.bones.forEach(b => {
@@ -194,7 +194,7 @@ class ActiveRagdoll {
     }
 }
 
-const character = new ActiveRagdoll(100, GROUND_Y);
+const character = new ActiveRagdoll(100, 100);
 
 function loop() {
     ctx.fillStyle = "#121214";
