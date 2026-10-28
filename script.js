@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 
 const GRAVITY = 0.68;
 const FRICTION = 0.31;
-const GROUND_Y = 500;
+const GROUND_Y = 200;
 
 let muscleState = "ACTIVE";
 let loopTimer = 0;
