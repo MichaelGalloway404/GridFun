@@ -37,17 +37,17 @@ class ActiveRagdoll {
 
         // 2. Structural Lengths (Rigid Skeletal Constraints)
         this.link(0, 1, 25);  // Head to Neck
-        this.link(1, 2, 30);  // Spine
+        this.link(1, 2, 35);  // Spine
         this.link(1, 3, 5);  // Left Collar
         this.link(1, 4, 5);  // Right Collar
         this.link(3, 5, 20);  // Left Upper Arm
-        this.link(5, 7, 20);  // Left Forearm
+        this.link(5, 7, 15);  // Left Forearm
         this.link(4, 6, 20);  // Right Upper Arm
-        this.link(6, 8, 20);  // Right Forearm
-        this.link(2, 9, 25);  // Left Thigh
-        this.link(9, 11, 25); // Left Calf
-        this.link(2, 10, 25); // Right Thigh
-        this.link(10, 12, 25);// Right Calf
+        this.link(6, 8, 15);  // Right Forearm
+        this.link(2, 9, 20);  // Left Thigh
+        this.link(9, 11, 20); // Left Calf
+        this.link(2, 10, 20); // Right Thigh
+        this.link(10, 12, 20);// Right Calf
     }
 
     addPoint(x, y, r, label) {
@@ -66,15 +66,15 @@ class ActiveRagdoll {
             muscleState = "LIMP";
             loopTimer = 0;
         } else if (muscleState === "LIMP" && loopTimer > 180) { 
-            this.resetPosition(100, GROUND_Y);
+            this.resetPosition(244, 540);
             muscleState = "ACTIVE";
             loopTimer = 0;
         }
 
         // --- PHASE 1: Apply Muscle Forces (STRICTLY IF ALIVE) ---
         if (muscleState === "ACTIVE") {
-            this.animFrame += 0.06;
-            this.x += .5; // Constant move forward speed
+            this.animFrame += 0.09;
+            this.x += .65; // Constant move forward speed
             this.applyMuscleForces();
         } else {
             // Keep anchor systems locked directly to physics values
@@ -157,16 +157,46 @@ class ActiveRagdoll {
         });
     }
 
-    resetPosition(nx, ny) {
-        this.x = nx;
-        this.y = ny;
-        this.points.forEach((p, idx) => {
-            p.x = nx;
-            p.y = ny - 40;
-            p.oldX = p.x;
-            p.oldY = p.y;
-        });
-    }
+    // resetPosition(nx, ny) {
+    //     this.x = nx;
+    //     this.y = ny;
+    //     this.points.forEach((p, idx) => {
+    //         p.x = nx;
+    //         p.y = ny - 40;
+    //         p.oldX = p.x;
+    //         p.oldY = p.y;
+    //     });
+    // }
+	resetPosition(nx, ny) {
+    this.x = nx;
+    this.y = ny;
+    this.animFrame = 0;
+
+    const positions = [
+        [0, -80],    // 0 Head
+        [0, -55],    // 1 Neck
+        [0, -25],    // 2 Pelvis
+        [-5, -55],   // 3 Left Shoulder
+        [15, -55],   // 4 Right Shoulder
+        [-20, -35],  // 5 Left Elbow
+        [20, -35],   // 6 Right Elbow
+        [-22, -15],  // 7 Left Hand
+        [22, -15],   // 8 Right Hand
+        [-10, -15],  // 9 Left Knee
+        [10, -15],   // 10 Right Knee
+        [-12, 5],    // 11 Left Foot
+        [12, 5]      // 12 Right Foot
+    ];
+
+    this.points.forEach((p, idx) => {
+        p.x = nx + positions[idx][0];
+        p.y = ny + positions[idx][1];
+
+        // Reset Verlet velocity
+        p.oldX = p.x;
+        p.oldY = p.y;
+    });
+}
 
     draw() {
         ctx.strokeStyle = muscleState === "ACTIVE" ? "#4caf50" : "#f44336";
