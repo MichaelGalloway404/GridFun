@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 // --- Physics Configurations ---
 const GRAVITY = 0.68;
 const FRICTION = 0.31;
-const GROUND_Y = 600;
+const GROUND_Y = 500;
 
 // --- State Engine ---
 let muscleState = "ACTIVE"; // "ACTIVE" or "LIMP"
@@ -194,7 +194,7 @@ class ActiveRagdoll {
     }
 }
 
-const character = new ActiveRagdoll(20, 20);
+const character = new ActiveRagdoll(244, 540);
 
 function loop() {
     ctx.fillStyle = "#121214";
